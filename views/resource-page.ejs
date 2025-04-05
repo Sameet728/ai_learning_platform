@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📘 Personalized Learning Plan: <%= topic %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #4f46e5; /* Indigo */
+      --primary-color-dark: #4338ca;
+      --secondary-color: #10b981; /* Emerald */
+      --text-color: #374151; /* Gray 700 */
+      --text-color-light: #6b7280; /* Gray 500 */
+      --bg-color: #f9fafb; /* Gray 50 */
+      --card-bg-color: #ffffff;
+      --border-color: #e5e7eb; /* Gray 200 */
+    }
+
+    body {
+      font-family: 'Lato', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    /* Use <main> for the primary content container */
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 40px 50px;
+      background-color: var(--card-bg-color);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+      border: 1px solid var(--border-color);
+    }
+
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 2.8rem;
+      margin: 0 0 15px 0;
+    }
+
+    .topic-display {
+        text-align: center;
+        color: var(--text-color-light);
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+    }
+
+    .topic-display strong {
+        color: var(--text-color);
+        font-weight: 700;
+    }
+
+    /* Style the <section> element */
+    .section {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Use :first-of-type pseudo-class for semantic targeting */
+    main .section:first-of-type {
+        border-top: none;
+        padding-top: 0;
+        margin-top: 0;
+    }
+
+    .section h2 {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    /* Style paragraphs within sections */
+    .section p {
+      font-size: 1rem;
+      color: var(--text-color);
+      line-height: 1.7;
+      margin-bottom: 15px;
+      white-space: pre-line; /* Handles line breaks from source */
+    }
+
+    /* Style links within section paragraphs */
+    .section p a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease, border-bottom 0.2s ease;
+      border-bottom: 1px dashed var(--secondary-color);
+    }
+
+    .section p a:hover,
+    .section p a:focus {
+      color: #047857;
+      text-decoration: none;
+      border-bottom: 1px solid #047857;
+    }
+
+    /* Button container styling */
+    .btn-container {
+      text-align: center;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Button styling */
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Added box-shadow transition */
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn:hover,
+    .btn:focus {
+      background-color: var(--primary-color-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+      outline: none;
+    }
+
+    /* Responsive adjustments */
+    @media only screen and (max-width: 768px) {
+      .container {
+        margin: 20px;
+        padding: 30px 25px;
+      }
+      h1 { font-size: 2.2rem; }
+      .section h2 { font-size: 1.5rem; }
+    }
+
+     @media only screen and (max-width: 480px) {
+        h1 { font-size: 1.8rem; }
+        .section h2 { font-size: 1.3rem; }
+        .container { padding: 25px 20px; }
+        .btn { padding: 12px 24px; font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  
+  <main class="container" role="main">
+    <h1>📘 Personalized Learning Plan</h1>
+    <p class="topic-display">Topic: <strong><%= topic %></strong></p>
+
+    <%
+      const urlRegex = /(https?:\/\/[^\s"'\(\)<>]+)/g;
+      const sections = resource.split(/\*\*(.*?)\*\*/g);
+    %>
+
+    <% for (let i = 1; i < sections.length; i += 2) { %>
+      <% const title = sections[i].trim(); %>
+      <% const content = sections[i+1] ? sections[i+1].trim() : ''; %>
+
+      <% if (title && content) { %>
+        <section class="section">
+          <h2><%= title %></h2>
+          <p>
+            <%# Render content, automatically linking raw URLs %>
+            <%- content.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`) %>
+          </p>
+        </section>
+      <% } %>
+    <% } %>
+
+    <div class="btn-container">
+      <a href="/" class="btn">🔁 Take Another Quiz</a>
+    </div>
+  </main> </body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quiz Results</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      padding: 2rem;
+    }
+
+    .container {
+      background: white;
+      max-width: 600px;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .score {
+      font-size: 24px;
+      color: #4f46e5;
+      margin-bottom: 1rem;
+    }
+
+    .result-item {
+      margin-bottom: 1rem;
+    }
+
+    .correct {
+      color: green;
+    }
+
+    .wrong {
+      color: red;
+    }
+    
+    
+
+    .resource-form button {
+      padding: 12px 25px;
+      font-size: 16px;
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .resource-form{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .resource-form button:hover {
+      background-color: #4338ca;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="score">You scored <%= score %> out of <%= total %>!</div>
+    <% results.forEach(r => { %>
+        <div class="result-item">
+          <strong>Q<%= r.questionNumber %>:</strong> <%= r.question %><br />
+          <% if (r.isCorrect) { %>
+            ✅ <span class="correct">Correct! You answered: <%= r.yourAnswer %></span>
+          <% } else { %>
+            ❌ <span class="wrong">Wrong.</span><br />
+            Your Answer: <%= r.yourAnswer %><br />
+            Correct Answer: <%= r.correctAnswer %>
+          <% } %>
+        </div>
+      <% }) %>
+      <form class="resource-form" action="/generate-resource" method="POST">
+       
+
+        <input type="hidden" name="topic" value="<%= topic %>">
+        <input type="hidden" name="quizResults" value='<%= JSON.stringify(results) %>'>
+    
+        <button type="submit">Generate Resources</button>
+      </form>
+
+  </div>
+ 
+</body>
+</html>
