@@ -1,89 +1,305 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Quiz Results</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      padding: 2rem;
-    }
+    <meta charset="UTF-8">
+    <title>Quiz Results | LearnSmart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f4f6f8;
+            color: #333;
+            line-height: 1.6;
+            padding-top: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: relative;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #2c3e50;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #3498db;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #2c3e50;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-outline {
+            border: 2px solid #2c3e50;
+            color: #2c3e50;
+        }
+        
+        .btn-outline:hover {
+            background: #f8f9fa;
+        }
 
-    .container {
-      background: white;
-      max-width: 600px;
-      margin: auto;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .score {
-      font-size: 24px;
-      color: #4f46e5;
-      margin-bottom: 1rem;
-    }
-
-    .result-item {
-      margin-bottom: 1rem;
-    }
-
-    .correct {
-      color: green;
-    }
-
-    .wrong {
-      color: red;
-    }
-    
-    
-
-    .resource-form button {
-      padding: 12px 25px;
-      font-size: 16px;
-      background-color: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .resource-form{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .resource-form button:hover {
-      background-color: #4338ca;
-    }
-  </style>
+        /* Quiz Results Styles */
+        .results-container {
+            background: white;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .score-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .score {
+            font-size: 2rem;
+            color: #4f46e5;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .topic {
+            font-size: 1.2rem;
+            color: #64748b;
+        }
+        
+        .result-item {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #f8fafc;
+        }
+        
+        .question {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+        
+        .correct {
+            color: #10b981;
+        }
+        
+        .wrong {
+            color: #ef4444;
+        }
+        
+        .answer {
+            margin-top: 0.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .resource-form {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .btn-generate {
+            padding: 0.8rem 1.8rem;
+            font-size: 1rem;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-generate:hover {
+            background-color: #4338ca;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: #fff;
+                flex-direction: column;
+                gap: 0;
+                padding: 1rem 0;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+                display: none;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links a {
+                padding: 1rem;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .nav-links .btn {
+                margin: 0.5rem auto;
+                display: block;
+                width: 80%;
+                text-align: center;
+            }
+            
+            .results-container {
+                
+                padding: 1.5rem;
+            }
+            
+            .score {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="score">You scored <%= score %> out of <%= total %>!</div>
-    <% results.forEach(r => { %>
-        <div class="result-item">
-          <strong>Q<%= r.questionNumber %>:</strong> <%= r.question %><br />
-          <% if (r.isCorrect) { %>
-            ✅ <span class="correct">Correct! You answered: <%= r.yourAnswer %></span>
-          <% } else { %>
-            ❌ <span class="wrong">Wrong.</span><br />
-            Your Answer: <%= r.yourAnswer %><br />
-            Correct Answer: <%= r.correctAnswer %>
-          <% } %>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo">LearnSmart</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="/notes">Notes</a>
+                <a href="/todo">To-Do</a>
+                <% if (currentUser) { %>
+                    <a href="/dashboard" class="btn btn-primary">Dashboard</a>
+                    <a href="/logout" class="btn btn-outline">Logout</a>
+                <% } else { %>
+                    <a href="/login" class="btn btn-outline">Login</a>
+                <% } %>
+            </div>
         </div>
-      <% }) %>
-      <form class="resource-form" action="/generate-resource" method="POST">
-       
+    </nav>
 
-        <input type="hidden" name="topic" value="<%= topic %>">
-        <input type="hidden" name="quizResults" value='<%= JSON.stringify(results) %>'>
-    
-        <button type="submit">Generate Resources</button>
-      </form>
+    <!-- Quiz Results Content -->
+    <div class="container">
+        <div class="results-container">
+            <div class="score-header">
+                <div class="score">You scored <%= score %> out of <%= total %>!</div>
+                <div class="topic">Topic: <%= topic.toUpperCase() %></div>
+            </div>
+            
+            <% results.forEach(r => { %>
+                <div class="result-item">
+                    <div class="question">Q<%= r.questionNumber %>: <%= r.question %></div>
+                    <% if (r.isCorrect) { %>
+                        <div class="answer correct">
+                            <i class="fas fa-check-circle"></i> Correct! You answered: <%= r.yourAnswer %>
+                        </div>
+                    <% } else { %>
+                        <div class="answer wrong">
+                            <i class="fas fa-times-circle"></i> Incorrect
+                        </div>
+                        <div class="answer">
+                            <strong>Your answer:</strong> <%= r.yourAnswer %>
+                        </div>
+                        <div class="answer">
+                            <strong>Correct answer:</strong> <%= r.correctAnswer %>
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
+            
+            <form class="resource-form" action="/generate-resource" method="POST">
+                <input type="hidden" name="topic" value="<%= topic %>">
+                <input type="hidden" name="quizResults" value='<%= JSON.stringify(results) %>'>
+                <button type="submit" class="btn-generate">
+                    <i class="fas fa-book"></i> Generate Learning Resources
+                </button>
+            </form>
+        </div>
+    </div>
 
-  </div>
- 
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link (for mobile)
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    navLinks.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

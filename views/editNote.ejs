@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title><%= topic %> Quiz | LearnSmart</title>
-
-  <!-- Tailwind CDN (optional if you're using your own CSS) -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
-
+  <meta charset="UTF-8">
+  <title>Edit Note | LearnSmart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f3f4f6;
+    /* Navbar Styles */
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .navbar {
@@ -69,11 +67,13 @@
     }
 
     .cta-button {
-      padding: 0.5rem 1.2rem;
+      display: inline-block;
+      padding: 0.8rem 2rem;
       background: #3498db;
       color: white;
-      border-radius: 5px;
       text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s ease;
     }
 
     .cta-button:hover {
@@ -85,13 +85,15 @@
       border: 2px solid #2c3e50;
       border-radius: 5px;
       padding: 8px 15px;
+      display: inline-block;
     }
 
+    /* Responsive Styles */
     @media (max-width: 768px) {
       .mobile-menu-btn {
         display: block;
       }
-
+      
       .nav-links {
         position: absolute;
         top: 100%;
@@ -104,17 +106,17 @@
         box-shadow: 0 5px 10px rgba(0,0,0,0.1);
         display: none;
       }
-
+      
       .nav-links.active {
         display: flex;
       }
-
+      
       .nav-links a {
         padding: 1rem;
         width: 100%;
         text-align: center;
       }
-
+      
       .nav-links .cta-button,
       .nav-links .login-button {
         margin: 0.5rem auto;
@@ -123,78 +125,10 @@
         text-align: center;
       }
     }
-
-    /* Quiz-specific styles */
-    .quiz-container {
-      background: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      max-width: 800px;
-      margin: 40px auto;
-    }
-
-    h2 {
-      color: #4f46e5;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .question-block {
-      margin-bottom: 30px;
-    }
-
-    .question {
-      font-size: 20px;
-      margin-bottom: 10px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .option-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .option-label {
-      background-color: #f9fafb;
-      border: 2px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: 0.3s ease;
-      display: block;
-    }
-
-    input[type="radio"]:checked + .option-label {
-      background-color: #4f46e5;
-      color: white;
-      border-color: #4f46e5;
-    }
-
-    .submit-btn {
-      padding: 12px 25px;
-      font-size: 16px;
-      background-color: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s ease;
-      display: block;
-      margin: 20px auto 0;
-    }
-
-    .submit-btn:hover {
-      background-color: #4338ca;
-    }
   </style>
 </head>
-
-<body>
-
-  <!-- Navbar -->
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <!-- Responsive Navbar -->
   <nav class="navbar">
     <div class="container nav-container">
       <a href="/" class="logo">LearnSmart</a>
@@ -205,7 +139,7 @@
         <a href="/notes">Notes</a>
         <a href="/todo">To-Do</a>
         <% if (currentUser) { %>
-          <a href="/dashboard" class="cta-button">Dashboard</a>
+          <a href="dashboard" class="cta-button">Dashboard</a>
           <a href="/logout" class="login-button">Logout</a>
         <% } else { %>
           <a href="/login" class="login-button">Login</a>
@@ -214,40 +148,35 @@
     </div>
   </nav>
 
-  <!-- Quiz Content -->
-  <div class="quiz-container">
-    <h2><%=  topic.toUpperCase() %> Quiz</h2>
-    <form action="/submit-quiz" method="POST">
-      <% quiz.forEach((quizs, index) => { %>
-        <div class="question-block">
-          <div class="question">Q<%= index + 1 %>. <%= quizs.question %></div>
-          <div class="option-group">
-            <% quizs.options.forEach((opt, i) => { %>
-              <div>
-                <input type="radio" id="q<%= index %>_<%= i %>" name="q<%= index %>" value="<%= opt %>" required hidden>
-                <label class="option-label" for="q<%= index %>_<%= i %>"><%= opt %></label>
-              </div>
-            <% }) %>
-          </div>
-        </div>
-      <% }) %>
+  <!-- Edit Note Form -->
+  <div class="max-w-xl mx-auto mt-10 p-6 bg-white rounded shadow">
+    <h1 class="text-2xl font-bold mb-6 text-indigo-600 text-center">✏️ Edit Note</h1>
 
-      <input type="hidden" name="answers" value='<%= JSON.stringify(quiz.map(q => q.answer)) %>' />
-      <input type="hidden" name="questions" value='<%= JSON.stringify(quiz.map(q => q.question)) %>' />
-      <input type="hidden" name="topic" value='<%=  topic.toUpperCase()    %>' />
-
-      <button class="submit-btn" type="submit">Submit Quiz</button>
+    <form action="/notes/edit/<%= index %>" method="POST" class="space-y-4">
+      <input type="text" name="title" value="<%= note.title %>" required 
+             class="border p-2 w-full rounded focus:ring-2 focus:ring-indigo-400 focus:border-transparent" />
+      <textarea name="content" required 
+                class="border p-2 w-full rounded h-24 focus:ring-2 focus:ring-indigo-400 focus:border-transparent"><%= note.content %></textarea>
+      <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors">
+        💾 Save Changes
+      </button>
     </form>
+
+    <div class="mt-4 text-center">
+      <a href="/notes" class="text-indigo-600 hover:underline">← Back to Notes</a>
+    </div>
   </div>
 
   <script>
+    // Mobile menu toggle
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const navLinks = document.getElementById('navLinks');
-
+    
     mobileMenuBtn.addEventListener('click', () => {
       navLinks.classList.toggle('active');
     });
-
+    
+    // Close menu when clicking on a link (for mobile)
     document.querySelectorAll('.nav-links a').forEach(link => {
       link.addEventListener('click', () => {
         if (window.innerWidth <= 768) {
@@ -256,6 +185,5 @@
       });
     });
   </script>
-
 </body>
 </html>

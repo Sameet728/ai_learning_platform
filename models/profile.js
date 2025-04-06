@@ -25,7 +25,25 @@ const userSchema = new mongoose.Schema({
       content: String,
       date: { type: Date, default: Date.now }
     }
+  ],
+  notes: [
+    {
+      title: String,
+      content: String,
+      createdAt: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
+  todos: [
+    {
+      task: String,
+      completed: { type: Boolean, default: false },
+      createdAt: { type: Date, default: Date.now },
+    },
   ]
+  
 });
 
 userSchema.plugin(passportLocalMongoose);

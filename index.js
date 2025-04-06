@@ -11,13 +11,20 @@ const MongoStore = require('connect-mongo');
 require('dotenv').config();
 
 const dburl = process.env.ATLAS_URL;
-const apiKey ="AIzaSyBF2wMokYFjp5JgDy3gbVigFfTr6S6RC-U"  ; // Store your API key in .env
+const apiKey =process.env.api_Key  ; // Store your API key in .env
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "/public")));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login'); // Or wherever your login route is
+}
+
 
 // MongoDB Session Store
 const store = MongoStore.create({
@@ -105,13 +112,17 @@ app.get("/", async (req, res) => {
 
 app.get("/quiz", async (req, res) => {
   try {
-    res.render("../views/quiz.ejs");
-    // Relative to 'views' folder, no need for full path
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+      return res.redirect("/login"); // Redirect to login if user is not authenticated
+    }
+
+    res.render("quiz"); // No need for ../views, Express views dir handles it
   } catch (e) {
     console.error("Error rendering quiz page:", e);
-    res.status(500).redirect("/error"); // Optional: set status code for clarity
+    res.status(500).redirect("/error"); // Optional fallback
   }
 });
+
 
 app.post("/quizmaker", async (req, res) => {
   try {
@@ -403,6 +414,89 @@ app.get('/dashboard', (req, res) => {
 });
 
 
+
+app.post('/notes', isAuthenticated, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  user.notes.push({
+    title: req.body.title,
+    content: req.body.content
+  });
+  await user.save();
+  res.redirect('/notes');
+});
+
+
+app.get('/notes', isAuthenticated, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  res.render('notes', { user });
+});
+
+app.get('/notes/edit/:index', isAuthenticated, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const note = user.notes[req.params.index];
+  res.render('editNote', { note, index: req.params.index });
+});
+
+// Handle Edit
+app.post('/notes/edit/:index', isAuthenticated, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const { title, content } = req.body;
+  user.notes[req.params.index] = { title, content };
+  await user.save();
+  res.redirect('/notes');
+});
+
+// Handle Delete
+app.post('/notes/delete/:index', isAuthenticated, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  user.notes.splice(req.params.index, 1);
+  await user.save();
+  res.redirect('/notes');
+});
+
+
+
+// TODO page - view list
+app.get('/todo', isAuthenticated, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  
+  res.render('todos', { todos: user.todos });
+});
+
+// Add a todo: /todo/add?task=Read+book
+app.get('/todo/add', isAuthenticated, async (req, res) => {
+  const { task } = req.query;
+  if (task) {
+    await User.findByIdAndUpdate(req.user._id, {
+      $push: { todos: { task } },
+    });
+  }
+  res.redirect('/todo');
+});
+
+// Complete a todo: /todo/complete?index=0
+app.get('/todo/complete', isAuthenticated, async (req, res) => {
+  const { index } = req.query;
+  const user = await User.findById(req.user._id);
+  if (user.todos[index]) {
+    user.todos[index].completed = true;
+    await user.save();
+  }
+  res.redirect('/todo');
+});
+
+// Delete a todo: /todo/delete?index=0
+app.get('/todo/delete', isAuthenticated, async (req, res) => {
+  const { index } = req.query;
+  const user = await User.findById(req.user._id);
+  if (user.todos[index]) {
+    user.todos.splice(index, 1);
+    await user.save();
+  }
+  res.redirect('/todo');
+});
+
+
 // Logout Logic
 app.get("/logout", (req, res, next) => {
   req.logout(function (error) {
@@ -416,6 +510,6 @@ app.get("/logout", (req, res, next) => {
 });
 
 // Server Start
-app.listen(3000, () => {
+app.listen(3001, () => {
   console.log("Server running on port 3000");
 });
