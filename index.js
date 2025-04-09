@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const path = require("path");
 const mongoose = require('mongoose');
+const topicResources = require('./topicResources');
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -81,7 +82,9 @@ main();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(apiKey);
 
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
+
+
 
 // Generate AI Response
 async function run(promptMsg) {
@@ -90,7 +93,7 @@ async function run(promptMsg) {
     const result = await model.generateContent(prompt);
     const response = result.response;
     const text = await response.text(); // await here to correctly handle the Promise
-    console.log(text);
+   
     return text;
   } catch (e) {
     console.error("Error in AI Response:", e);
@@ -102,7 +105,7 @@ async function run(promptMsg) {
 app.get("/", async (req, res) => {
   try {
    
-    res.render("../views/chat.ejs");
+    res.render("../views/home.ejs");
   } catch (e) {
     console.error("Error rendering chats:", e);
     res.redirect("/error"); // Redirect to a proper error page or handler
@@ -126,38 +129,69 @@ app.get("/quiz", async (req, res) => {
 
 app.post("/quizmaker", async (req, res) => {
   try {
-    const topic = req.body.topic;
-    console.log("User selected topic:", topic);
+    const { topic, educationLevel } = req.body;
+    console.log(`User selected topic: ${topic}, education level: ${educationLevel}`);
+
+    // Determine difficulty based on education level
+    let difficulty = '';
+    if (educationLevel.startsWith('class')) {
+      const classNum = parseInt(educationLevel.replace('class', ''));
+      if (classNum <= 5) {
+        difficulty = 'basic';
+      } else if (classNum <= 8) {
+        difficulty = 'intermediate';
+      } else {
+        difficulty = 'advanced';
+      }
+    } else if (educationLevel.startsWith('year')) {
+      difficulty = 'college-level';
+    }
 
     const prompt = `
-      Create a 10-question multiple choice quiz on the topic "${topic}".
-      Format the output as a valid JSON array like this (no extra text or markdown):
+      Create a 10-question multiple choice quiz on the topic "${topic}" 
+      appropriate for ${educationLevel} (${difficulty} difficulty level).
+      
+      Requirements:
+      - Questions should match the education level
+      - Format as a valid JSON array
+      - Include 4 options per question
+      - Mark the correct answer
+      
+      Example format:
       [
         {
           "question": "Question text?",
           "options": ["option1", "option2", "option3", "option4"],
-          "answer": "correct option"
+          "answer": "correct option",
+          "explanation": "Brief explanation of the answer"
         },
         ...
       ]
+      
+      Important: Only output the JSON array, no additional text or markdown.
     `;
 
     let quizRaw = await run(prompt);
 
-    // Clean markdown formatting from response
+    // Clean and parse the response
     if (typeof quizRaw === "string") {
       quizRaw = quizRaw.trim();
-      // Remove triple backticks if present
-      quizRaw = quizRaw.replace(/```json|```/g, '');
+      // Remove any code block markers
+      quizRaw = quizRaw.replace(/```(json)?/g, '');
     }
 
     const quiz = JSON.parse(quizRaw);
-    console.log("Parsed quiz:", quiz);
+   
 
-    res.render("quizgive.ejs", { quiz, topic });
+    res.render("quizgive.ejs", { 
+      quiz, 
+      topic,
+      educationLevel,
+      difficulty 
+    });
 
   } catch (e) {
-    console.error("Error rendering quiz page:", e);
+    console.error("Error generating quiz:", e);
     res.status(500).redirect("/error");
   }
 });
@@ -203,13 +237,14 @@ app.post("/generate-resource", async (req, res) => {
   const quizResults = JSON.parse(req.body.quizResults); // Expects an array like [{question, correctAnswer, userAnswer, isCorrect}, ...]
 
   console.log("Generating resource for topic:", topic);
-  console.log(req.user);
-  console.log(req.user._id);
+
   // console.log("User's quiz performance:", quizResults);
+  const getResourcesByTopic = (topic) => {
+    return topicResources.find(res => res.topic.toLowerCase() === topic.toLowerCase());
+  };
+console.log(getResourcesByTopic(topic));
 
-
-  const prompt = `
-You are an intelligent learning assistant. A student completed a quiz on the topic: **"${topic}"**.
+  const prompt = `You are an intelligent learning assistant. A student completed a quiz on the topic: **"${topic}"**.
 
 Below is their performance data in JSON format:
 
@@ -287,9 +322,9 @@ Focus only on the student’s weak areas:
 
 
 let resource= await run(prompt);
-console.log(req.user)
+
 if (req.user) {
-  console.log(req.user);
+  
   const user = await User.findById(req.user._id);
 
   // Save quiz
@@ -316,7 +351,7 @@ res.render("resource-page.ejs", {topic,
 app.get('/dashboard', async (req, res) => {
   try {
     const user = req.user;
-    console.log(user);
+  
     res.render("dashboard", { user }); 
   } catch (err) {
     console.error("Dashboard fetch error:", err);
