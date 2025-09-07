@@ -248,14 +248,12 @@
                                     <li style="margin-bottom: 12px;">
                                         <strong>Q<%= qIndex + 1 %>: <%= q.question || "No question available" %></strong><br/>
                                         
-                                        <em>Options:</em> 
-                                        <%= Array.isArray(q.options) ? q.options.join(', ') : "Options not available" %><br/>
                                         
                                         ✅ <strong>Correct:</strong> <%= q.correctAnswer || "N/A" %><br/>
                                         
                                         🧑‍🎓 <strong>Your Answer:</strong>
-                                        <span style="color: <%= q.userAnswer === q.correctAnswer ? 'green' : 'red' %>;">
-                                            <%= q.userAnswer || "N/A" %>
+                                        <span >
+                                            <%= q.yourAnswer || "N/A" %>
                                         </span>
                                     </li>
                                 <% }) %>

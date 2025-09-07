@@ -1,18 +1,18 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 const path = require("path");
-const mongoose = require('mongoose');
-const topicResources = require('./topicResources');
+const mongoose = require("mongoose");
+const  esources = require("./topicResources");
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/profile.js");
 const session = require("express-session");
-const MongoStore = require('connect-mongo');
-require('dotenv').config();
+const MongoStore = require("connect-mongo");
+require("dotenv").config();
 
 const dburl = process.env.ATLAS_URL;
-const apiKey =process.env.api_Key  ; // Store your API key in .env
+const apiKey = process.env.api_Key; // Store your API key in .env
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -23,9 +23,8 @@ function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/login'); // Or wherever your login route is
+  res.redirect("/login"); // Or wherever your login route is
 }
-
 
 // MongoDB Session Store
 const store = MongoStore.create({
@@ -82,9 +81,7 @@ main();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(apiKey);
 
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" })
-
-
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 // Generate AI Response
 async function run(promptMsg) {
@@ -93,7 +90,7 @@ async function run(promptMsg) {
     const result = await model.generateContent(prompt);
     const response = result.response;
     const text = await response.text(); // await here to correctly handle the Promise
-   
+
     return text;
   } catch (e) {
     console.error("Error in AI Response:", e);
@@ -104,14 +101,12 @@ async function run(promptMsg) {
 // Routes
 app.get("/", async (req, res) => {
   try {
-   
     res.render("../views/home.ejs");
   } catch (e) {
     console.error("Error rendering chats:", e);
     res.redirect("/error"); // Redirect to a proper error page or handler
   }
 });
-
 
 app.get("/quiz", async (req, res) => {
   try {
@@ -126,26 +121,51 @@ app.get("/quiz", async (req, res) => {
   }
 });
 
-
 app.post("/quizmaker", async (req, res) => {
   try {
-    const { topic, educationLevel } = req.body;
-    console.log(`User selected topic: ${topic}, education level: ${educationLevel}`);
+    const { topic } = req.body;
+    let educationLevel = req.user?.educationLevel;
+    console.log(
+      `User selected topic: ${topic}, education level: ${educationLevel}`
+    );
 
     // Determine difficulty based on education level
-    let difficulty = '';
-    if (educationLevel.startsWith('class')) {
-      const classNum = parseInt(educationLevel.replace('class', ''));
-      if (classNum <= 5) {
-        difficulty = 'basic';
-      } else if (classNum <= 8) {
-        difficulty = 'intermediate';
-      } else {
-        difficulty = 'advanced';
-      }
-    } else if (educationLevel.startsWith('year')) {
-      difficulty = 'college-level';
-    }
+    let difficulty = "";
+
+switch (educationLevel) {
+  case "Primary (Classes 1-5)":
+    difficulty = "beginner";   // instead of basic
+    break;
+
+  case "Middle (Classes 6-8)":
+    difficulty = "easy";       // instead of intermediate
+    break;
+
+  case "Secondary (Classes 9-10)":
+    difficulty = "intermediate";
+    break;
+
+  case "Higher Secondary (Classes 11-12)":
+    difficulty = "advanced";   // not "expert", fits better
+    break;
+
+  case "1st Year":
+  case "2nd Year":
+    difficulty = "college-basic";  // covers intro-level courses
+    break;
+
+  case "3rd Year":
+  case "4th Year":
+    difficulty = "college-advanced"; // higher-level, more depth
+    break;
+
+  default:
+    difficulty = "general";
+    break;
+}
+
+
+    console.log(`Assigned difficulty: ${difficulty}`);
 
     const prompt = `
       Create a 10-question multiple choice quiz on the topic "${topic}" 
@@ -177,25 +197,22 @@ app.post("/quizmaker", async (req, res) => {
     if (typeof quizRaw === "string") {
       quizRaw = quizRaw.trim();
       // Remove any code block markers
-      quizRaw = quizRaw.replace(/```(json)?/g, '');
+      quizRaw = quizRaw.replace(/```(json)?/g, "");
     }
 
     const quiz = JSON.parse(quizRaw);
-   
 
-    res.render("quizgive.ejs", { 
-      quiz, 
+    res.render("quizgive.ejs", {
+      quiz,
       topic,
       educationLevel,
-      difficulty 
+      difficulty,
     });
-
   } catch (e) {
     console.error("Error generating quiz:", e);
     res.status(500).redirect("/error");
   }
 });
-
 
 app.post("/submit-quiz", (req, res) => {
   try {
@@ -215,34 +232,37 @@ app.post("/submit-quiz", (req, res) => {
         question: questions[i],
         yourAnswer: userAnswers[i],
         correctAnswer: correctAnswers[i],
-        isCorrect
+        isCorrect,
       });
     }
+    console.log(results);
 
-    res.render("quiz-result.ejs", {topic,
+    res.render("quiz-result.ejs", {
+      topic,
       score,
       total: correctAnswers.length,
-      results
+      results,
     });
-
   } catch (err) {
     console.error("Error scoring quiz:", err);
     res.status(500).send("Something went wrong");
   }
 });
 
-
 app.post("/generate-resource", async (req, res) => {
   const topic = req.body.topic;
   const quizResults = JSON.parse(req.body.quizResults); // Expects an array like [{question, correctAnswer, userAnswer, isCorrect}, ...]
 
   console.log("Generating resource for topic:", topic);
+  console.log("User's quiz performance:", quizResults);
 
   // console.log("User's quiz performance:", quizResults);
   const getResourcesByTopic = (topic) => {
-    return topicResources.find(res => res.topic.toLowerCase() === topic.toLowerCase());
+    return topicResources.find(
+      (res) => res.topic.toLowerCase() === topic.toLowerCase()
+    );
   };
-console.log(getResourcesByTopic(topic));
+  console.log(getResourcesByTopic(topic));
 
   const prompt = `You are an intelligent learning assistant. A student completed a quiz on the topic: **"${topic}"**.
 
@@ -320,52 +340,65 @@ Focus only on the student’s weak areas:
 - Use markdown-style structure — this output will be converted into HTML or EJS for display.
 `;
 
+  let resource = await run(prompt);
 
-let resource= await run(prompt);
+  if (req.user) {
+    const user = await User.findById(req.user._id);
 
-if (req.user) {
-  
-  const user = await User.findById(req.user._id);
+    // Save quiz
+    user.quizzes.push({
+      topic,
+      results: quizResults,
+    });
 
-  // Save quiz
-  user.quizzes.push({
-    topic,
-    results: quizResults
-  });
+    // Save resource
+    user.resources.push({
+      topic,
+      content: resource,
+    });
 
-  // Save resource
-  user.resources.push({
-    topic,
-    content: resource
-  });
+    // ✅ Save test score with new schema structure
+    const score = quizResults.filter((q) => q.isCorrect).length;
 
-  await user.save();
-}
-res.render("resource-page.ejs", {topic,
- resource
+    // Find existing topic scores or create new entry
+    let topicScoreEntry = user.testScores.find((ts) => ts.topic === topic);
+
+    if (topicScoreEntry) {
+      // Topic exists, add new score to existing scores array
+      topicScoreEntry.scores.push(score);
+    } else {
+      // Topic doesn't exist, create new entry
+      user.testScores.push({
+        topic: topic,
+        scores: [score],
+      });
+    }
+    await user.save();
+  }
+  res.render("resource-page.ejs", { topic, resource });
 });
 
-});
-
-
-app.get('/dashboard', async (req, res) => {
+app.get("/dashboard", async (req, res) => {
   try {
     const user = req.user;
-  
-    res.render("dashboard", { user }); 
+
+    res.render("dashboard", { user });
   } catch (err) {
     console.error("Dashboard fetch error:", err);
     res.redirect("/login");
   }
 });
+app.get("/progress", async (req, res) => {
+  try {
+    const user = req.user;
+    const testScores = user.testScores;
 
-
-
-
-
-
-
-
+    res.render("progress", { testScores, user });
+  } catch (err) {
+    console.error("Dashboard fetch error:", err);
+    res.redirect("/login");
+  }
+});
 
 app.get("/delete", (req, res) => {
   res.send("deleting ");
@@ -373,14 +406,20 @@ app.get("/delete", (req, res) => {
 
 // User Routes
 app.get("/user", (req, res) => {
-  let userdetails = req.user;
-  if (!userdetails) {
+  if (!req.user) {
     console.log("Please log in first");
-    res.redirect("/login");
-  } else {
-    console.log(userdetails);
-    res.send(userdetails);
+    return res.redirect("/login");
   }
+
+  // Pick only needed fields
+  const { _id, email, username,educationLevel } = req.user;
+
+  res.json({
+    id: _id,
+    email,
+    username,
+    educationLevel
+  });
 });
 
 // Signup Render Route
@@ -396,14 +435,14 @@ app.get("/login", (req, res) => {
 // Signup Logic
 app.post("/signup", async (req, res) => {
   try {
-    let { username, email, password } = req.body;
-    console.log(username, email, password);
+    let { username, email, password, educationLevel } = req.body;
+    console.log(username, email, password, educationLevel);
 
     let user = await User.findOne({ username: username });
     let alreadyuser = await User.findOne({ email: email });
 
     if (!user && !alreadyuser) {
-      const newUser = new User({ email, username });
+      const newUser = new User({ email, username, educationLevel });
       const registeredUser = await User.register(newUser, password);
       console.log("Registered User:", registeredUser);
       res.redirect("/login");
@@ -421,7 +460,7 @@ app.post("/signup", async (req, res) => {
 // Login Logic
 app.post(
   "/login",
-  passport.authenticate("local", { failureRedirect: "/login?error=1", }),
+  passport.authenticate("local", { failureRedirect: "/login?error=1" }),
   async (req, res) => {
     try {
       let { username } = req.body;
@@ -442,95 +481,87 @@ app.post(
   }
 );
 
-app.get('/dashboard', (req, res) => {
-  res.send(
-    "Welcome back, Sameet! 🚀"
-  );
+app.get("/dashboard", (req, res) => {
+  res.send("Welcome back, Sameet! 🚀");
 });
 
-
-
-app.post('/notes', isAuthenticated, async (req, res) => {
+app.post("/notes", isAuthenticated, async (req, res) => {
   const user = await User.findById(req.user._id);
   user.notes.push({
     title: req.body.title,
-    content: req.body.content
+    content: req.body.content,
   });
   await user.save();
-  res.redirect('/notes');
+  res.redirect("/notes");
 });
 
-
-app.get('/notes', isAuthenticated, async (req, res) => {
+app.get("/notes", isAuthenticated, async (req, res) => {
   const user = await User.findById(req.user._id);
-  res.render('notes', { user });
+  res.render("notes", { user });
 });
 
-app.get('/notes/edit/:index', isAuthenticated, async (req, res) => {
+app.get("/notes/edit/:index", isAuthenticated, async (req, res) => {
   const user = await User.findById(req.user._id);
   const note = user.notes[req.params.index];
-  res.render('editNote', { note, index: req.params.index });
+  res.render("editNote", { note, index: req.params.index });
 });
 
 // Handle Edit
-app.post('/notes/edit/:index', isAuthenticated, async (req, res) => {
+app.post("/notes/edit/:index", isAuthenticated, async (req, res) => {
   const user = await User.findById(req.user._id);
   const { title, content } = req.body;
   user.notes[req.params.index] = { title, content };
   await user.save();
-  res.redirect('/notes');
+  res.redirect("/notes");
 });
 
 // Handle Delete
-app.post('/notes/delete/:index', isAuthenticated, async (req, res) => {
+app.post("/notes/delete/:index", isAuthenticated, async (req, res) => {
   const user = await User.findById(req.user._id);
   user.notes.splice(req.params.index, 1);
   await user.save();
-  res.redirect('/notes');
+  res.redirect("/notes");
 });
 
-
-
 // TODO page - view list
-app.get('/todo', isAuthenticated, async (req, res) => {
+app.get("/todo", isAuthenticated, async (req, res) => {
   const user = await User.findById(req.user._id);
-  
-  res.render('todos', { todos: user.todos });
+
+  res.render("todos", { todos: user.todos });
 });
 
 // Add a todo: /todo/add?task=Read+book
-app.get('/todo/add', isAuthenticated, async (req, res) => {
+app.get("/todo/add", isAuthenticated, async (req, res) => {
   const { task } = req.query;
   if (task) {
     await User.findByIdAndUpdate(req.user._id, {
       $push: { todos: { task } },
     });
   }
-  res.redirect('/todo');
+  res.redirect("/todo");
 });
 
 // Complete a todo: /todo/complete?index=0
-app.get('/todo/complete', isAuthenticated, async (req, res) => {
+app.get("/todo/complete", isAuthenticated, async (req, res) => {
   const { index } = req.query;
   const user = await User.findById(req.user._id);
   if (user.todos[index]) {
     user.todos[index].completed = true;
     await user.save();
   }
-  res.redirect('/todo');
+  res.redirect("/todo");
 });
 
 // Delete a todo: /todo/delete?index=0
-app.get('/todo/delete', isAuthenticated, async (req, res) => {
+app.get("/todo/delete", isAuthenticated, async (req, res) => {
   const { index } = req.query;
   const user = await User.findById(req.user._id);
   if (user.todos[index]) {
     user.todos.splice(index, 1);
     await user.save();
   }
-  res.redirect('/todo');
+  res.redirect("/todo");
 });
-
 
 // Logout Logic
 app.get("/logout", (req, res, next) => {
@@ -538,9 +569,8 @@ app.get("/logout", (req, res, next) => {
     if (error) {
       return next(error);
     }
-    
+
     res.redirect("/login");
-   
   });
 });
 

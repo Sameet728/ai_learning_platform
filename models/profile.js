@@ -4,6 +4,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const userSchema = new mongoose.Schema({
   email: String,
   username: String,
+  educationLevel: { type: String, required: true },  // 👈 NEW FIELD
   quizzes: [
     {
       topic: String,
@@ -42,7 +43,18 @@ const userSchema = new mongoose.Schema({
       completed: { type: Boolean, default: false },
       createdAt: { type: Date, default: Date.now },
     },
-  ]
+  ],
+   // ✅ Better approach: Use array of objects instead of Map
+  testScores: [{
+    topic: { 
+      type: String, 
+      required: true 
+    },
+    scores: {
+      type: [Number],
+      default: []
+    }
+  }]
   
 });
 
