@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
-const  esources = require("./topicResources");
+const topicResources = require("./topicResources");
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -578,3 +578,4 @@ app.get("/logout", (req, res, next) => {
 app.listen(3001, () => {
   console.log("Server running on port 3000");
 });
+
