@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
-const topicResources = require("./topicResources");
+const  topicResources = require("./topicResources");
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -563,6 +563,110 @@ app.get("/todo/delete", isAuthenticated, async (req, res) => {
   res.redirect("/todo");
 });
 
+
+
+
+//admin panel code 
+// // Admin Dashboard: View all scores
+// app.get("/admin/scores", async (req, res) => {
+//   try {
+//     const { topic, student } = req.query;
+
+//     let query = {};
+//     if (topic) query["testScores.topic"] = topic;
+//     if (student) query["username"] = student;
+
+//     // Get all users with scores
+//     const users = await User.find(query, "username testScores educationLevel");
+
+//     // Flatten for easier display
+//     const scores = [];
+//     users.forEach(user => {
+//       user.testScores.forEach(ts => {
+//         if (!topic || ts.topic === topic) {
+//           scores.push({
+//             username: user.username,
+//             educationLevel: user.educationLevel,
+//             topic: ts.topic,
+//             scores: ts.scores,   // array of scores
+//             avgScore: (
+//               ts.scores.reduce((a, b) => a + b, 0) / ts.scores.length
+//             ).toFixed(2),
+//           });
+//         }
+//       });
+//     });
+
+//     res.render("admin-scores", { scores, topic, student });
+//   } catch (err) {
+//     console.error("Error fetching scores:", err);
+//     res.status(500).send("Error fetching scores");
+//   }
+// });
+
+
+
+
+//gemini logic 
+app.get("/admin/scores", async (req, res) => {
+  try {
+    // Fetch necessary fields from all users
+    const allUsers = await User.find({}, 'username educationLevel testScores');
+
+    // 1. Flatten the data into a more usable format for the frontend
+    let scores = [];
+    allUsers.forEach(user => {
+      user.testScores.forEach(test => {
+        // Calculate the average score for the topic
+        const avgScore = test.scores.length > 0 ?
+          (test.scores.reduce((a, b) => a + b, 0) / test.scores.length * 10).toFixed(2) : // Assuming scores are out of 10
+          0;
+
+        scores.push({
+          username: user.username,
+          educationLevel: user.educationLevel,
+          topic: test.topic,
+          scores: test.scores, // This is the array of individual scores
+          avgScore: avgScore   // This is the calculated average percentage
+        });
+      });
+    });
+    
+    // 2. Handle filtering based on query parameters from the form
+    const { topic: topicFilter, student: studentFilter } = req.query;
+    if (topicFilter) {
+      scores = scores.filter(s => s.topic === topicFilter);
+    }
+    if (studentFilter) {
+      scores = scores.filter(s => s.username === studentFilter);
+    }
+
+    // 3. Get unique topics and students for filter dropdowns
+    // These are derived from all users so the dropdowns always have all options
+    const uniqueTopics = [...new Set(allUsers.flatMap(u => u.testScores.map(t => t.topic)))];
+    const uniqueStudents = allUsers.map(u => u.username);
+
+    // 4. Render the admin panel view with all the necessary data
+    res.render("admin/scores", {
+      scores,
+      uniqueTopics,
+      uniqueStudents,
+      topic: topicFilter || '',      // Pass current filter selection to the view
+      student: studentFilter || '' // to set the selected option in the dropdown
+    });
+
+  } catch (err) {
+    console.error("Error fetching data for admin panel:", err);
+    res.status(500).send("Server Error while fetching admin data.");
+  }
+});
+
+
+
+
+
+
+
 // Logout Logic
 app.get("/logout", (req, res, next) => {
   req.logout(function (error) {
@@ -575,7 +679,6 @@ app.get("/logout", (req, res, next) => {
 });
 
 // Server Start
-app.listen(3001, () => {
+app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
-
