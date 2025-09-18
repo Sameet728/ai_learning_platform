@@ -250,21 +250,15 @@ app.post("/submit-quiz", (req, res) => {
 });
 
 app.post("/generate-resource", async (req, res) => {
-  const topic = req.body.topic;
-  const quizResults = JSON.parse(req.body.quizResults); // Expects an array like [{question, correctAnswer, userAnswer, isCorrect}, ...]
+  try {
+    const topic = req.body.topic;
+    const quizResults = typeof req.body.quizResults === "string"
+      ? JSON.parse(req.body.quizResults)
+      : req.body.quizResults;
 
-  console.log("Generating resource for topic:", topic);
-  console.log("User's quiz performance:", quizResults);
+    console.log("Generating resource for topic:", topic);
 
-  // console.log("User's quiz performance:", quizResults);
-  const getResourcesByTopic = (topic) => {
-    return topicResources.find(
-      (res) => res.topic.toLowerCase() === topic.toLowerCase()
-    );
-  };
-  console.log(getResourcesByTopic(topic));
-
-  const prompt = `You are an intelligent learning assistant. A student completed a quiz on the topic: **"${topic}"**.
+    const prompt = `You are an intelligent learning assistant. A student completed a quiz on the topic: **"${topic}"**.
 
 Below is their performance data in JSON format:
 
@@ -340,42 +334,40 @@ Focus only on the student’s weak areas:
 - Use markdown-style structure — this output will be converted into HTML or EJS for display.
 `;
 
-  let resource = await run(prompt);
+    let resource = await run(prompt);
 
-  if (req.user) {
-    const user = await User.findById(req.user._id);
-
-    // Save quiz
-    user.quizzes.push({
-      topic,
-      results: quizResults,
-    });
-
-    // Save resource
-    user.resources.push({
-      topic,
-      content: resource,
-    });
-
-    // ✅ Save test score with new schema structure
-    const score = quizResults.filter((q) => q.isCorrect).length;
-
-    // Find existing topic scores or create new entry
-    let topicScoreEntry = user.testScores.find((ts) => ts.topic === topic);
-
-    if (topicScoreEntry) {
-      // Topic exists, add new score to existing scores array
-      topicScoreEntry.scores.push(score);
-    } else {
-      // Topic doesn't exist, create new entry
-      user.testScores.push({
-        topic: topic,
-        scores: [score],
-      });
+    if (!resource || resource.trim() === "") {
+      resource = "⚠️ Sorry, no resource could be generated. Please try again.";
     }
-    await user.save();
+
+    if (req.user) {
+      const user = await User.findById(req.user._id);
+
+      // Save quiz
+      user.quizzes.push({ topic, results: quizResults });
+
+      // Save resource
+      user.resources.push({ topic, content: resource });
+
+      // Save test score
+      const score = quizResults.filter((q) => q.isCorrect).length;
+      if (!user.testScores) user.testScores = [];
+
+      let topicScoreEntry = user.testScores.find((ts) => ts.topic === topic);
+      if (topicScoreEntry) {
+        topicScoreEntry.scores.push(score);
+      } else {
+        user.testScores.push({ topic, scores: [score] });
+      }
+
+      await user.save();
+    }
+
+    res.render("resource-page.ejs", { topic, resource });
+  } catch (e) {
+    console.error("Error generating resource:", e);
+    res.status(500).redirect("/error");
   }
-  res.render("resource-page.ejs", { topic, resource });
 });
 
 app.get("/dashboard", async (req, res) => {
@@ -682,3 +674,4 @@ app.get("/logout", (req, res, next) => {
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
+
