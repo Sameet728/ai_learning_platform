@@ -4,227 +4,266 @@
     <meta charset="UTF-8">
     <title>Quiz Results | LearnSmart</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Global Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f4f6f8;
-            color: #333;
-            line-height: 1.6;
-            padding-top: 0;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Navbar Styles */
-        .navbar {
-            background: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 1rem 0;
-            position: relative;
-        }
-        
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-            text-decoration: none;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: #2c3e50;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-links a:hover {
-            color: #3498db;
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #2c3e50;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 0.6rem 1.2rem;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary {
-            background: #3498db;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #2980b9;
-        }
-        
-        .btn-outline {
-            border: 2px solid #2c3e50;
-            color: #2c3e50;
-        }
-        
-        .btn-outline:hover {
-            background: #f8f9fa;
+        :root {
+            --primary: #4361ee;
+            --primary-light: #e8edff;
+            --primary-dark: #3550d4;
+            --secondary: #7209b7;
+            --success: #06d6a0;
+            --success-light: #ecfdf5;
+            --danger: #ef476f;
+            --danger-light: #fef2f2;
+            --dark: #111827;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --border-radius: 12px;
+            --border-radius-lg: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: 'Inter', sans-serif;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-bg: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
         }
 
-        /* Quiz Results Styles */
-        .results-container {
-            background: white;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-family);
+            background: var(--gradient-bg);
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
-        
-        .score-header {
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- Navbar --- */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.75rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-primary); font-weight: 500; transition: var(--transition); padding: 8px 12px; border-radius: 8px; }
+        .nav-links a:hover { color: var(--primary); background-color: var(--primary-light); }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary); }
+        .btn { display: inline-block; padding: 0.7rem 1.5rem; border-radius: var(--border-radius); text-decoration: none; transition: var(--transition); font-weight: 600; box-shadow: var(--shadow-sm); border: 2px solid transparent; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        /* --- Results Page --- */
+        .results-container {
+            max-width: 850px;
+            margin: 40px auto;
+        }
+
+        .score-summary-card {
+            background: var(--bg-white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 2.5rem;
             text-align: center;
             margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
         }
         
-        .score {
+        .score-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+
+        #scoreChart {
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .summary-text h1 {
             font-size: 2rem;
-            color: #4f46e5;
-            font-weight: bold;
+            font-weight: 700;
+            color: var(--text-primary);
             margin-bottom: 0.5rem;
         }
         
-        .topic {
-            font-size: 1.2rem;
-            color: #64748b;
+        .summary-text p {
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 2rem;
+        }
+
+        .stat-item {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
         }
         
+        .stat-item i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-item .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .stat-item .label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
         .result-item {
             margin-bottom: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            background-color: var(--bg-white);
+            box-shadow: var(--shadow-md);
+            border-left: 5px solid;
+            transition: var(--transition);
+        }
+
+        .result-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
         }
         
+        .result-item.correct { border-color: var(--success); }
+        .result-item.incorrect { border-color: var(--danger); }
+
         .question {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #1e293b;
-        }
-        
-        .correct {
-            color: #10b981;
-        }
-        
-        .wrong {
-            color: #ef4444;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-size: 1.1rem;
         }
         
         .answer {
-            margin-top: 0.5rem;
-            padding-left: 1.5rem;
-        }
-        
-        .resource-form {
-            display: flex;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-        
-        .btn-generate {
-            padding: 0.8rem 1.8rem;
+            margin-top: 0.75rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--border-color);
             font-size: 1rem;
-            background-color: #4f46e5;
+        }
+        
+        .answer-correct { color: var(--success); font-weight: 500; }
+        .answer-incorrect { color: var(--danger); font-weight: 500; }
+        
+        .resource-cta {
+            background: var(--gradient-primary);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            margin-top: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .resource-cta h2 {
             color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .resource-cta p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        .btn-generate {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            background-color: white;
+            color: var(--primary);
             border: none;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            display: flex;
+            transition: var(--transition);
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-md);
         }
-        
+
         .btn-generate:hover {
-            background-color: #4338ca;
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
         
-        /* Responsive Styles */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(67, 97, 238, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-            
+            .mobile-menu-btn { display: block; }
             .nav-links {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background: #fff;
-                flex-direction: column;
-                gap: 0;
-                padding: 1rem 0;
-                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+                position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
+                flex-direction: column; gap: 0; padding: 1rem 0; box-shadow: 0 5px 10px rgba(0,0,0,0.1);
                 display: none;
             }
-            
-            .nav-links.active {
-                display: flex;
-            }
-            
-            .nav-links a {
-                padding: 1rem;
-                width: 100%;
-                text-align: center;
-            }
-            
-            .nav-links .btn {
-                margin: 0.5rem auto;
-                display: block;
-                width: 80%;
-                text-align: center;
-            }
-            
-            .results-container {
-                
-                padding: 1.5rem;
-            }
-            
-            .score {
-                font-size: 1.5rem;
-            }
+            .nav-links.active { display: flex; }
+            .nav-links a { padding: 1rem; width: 100%; text-align: center; }
+            .nav-links .btn { margin: 0.5rem auto; display: block; width: 80%; text-align: center; }
+            .results-container { padding: 0 1rem; }
+            .score-summary-card { padding: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="container nav-container">
             <a href="/" class="logo">LearnSmart</a>
@@ -244,60 +283,123 @@
         </div>
     </nav>
 
-    <!-- Quiz Results Content -->
-    <div class="container">
-        <div class="results-container">
-            <div class="score-header">
-                <div class="score">You scored <%= score %> out of <%= total %>!</div>
-                <div class="topic">Topic: <%= topic.toUpperCase() %></div>
-            </div>
-            
-            <% results.forEach(r => { %>
-                <div class="result-item">
-                    <div class="question">Q<%= r.questionNumber %>: <%= r.question %></div>
-                    <% if (r.isCorrect) { %>
-                        <div class="answer correct">
-                            <i class="fas fa-check-circle"></i> Correct! You answered: <%= r.yourAnswer %>
-                        </div>
-                    <% } else { %>
-                        <div class="answer wrong">
-                            <i class="fas fa-times-circle"></i> Incorrect
-                        </div>
-                        <div class="answer">
-                            <strong>Your answer:</strong> <%= r.yourAnswer %>
-                        </div>
-                        <div class="answer">
-                            <strong>Correct answer:</strong> <%= r.correctAnswer %>
-                        </div>
-                    <% } %>
+    <div class="container results-container">
+        <div class="score-summary-card">
+            <div class="score-display">
+                <div class="chart-container">
+                    <canvas id="scoreChart"></canvas>
+                    <div class="score-text"><%= Math.round((score / total) * 100) %>%</div>
                 </div>
-            <% }) %>
-            
-            <form class="resource-form" action="/generate-resource" method="POST">
+                <div class="summary-text">
+                    <h1>Quiz Complete!</h1>
+                    <p>You scored <strong><%= score %></strong> out of <strong><%= total %></strong> on the <%= topic %> quiz.</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                    <div class="value"><%= score %></div>
+                    <div class="label">Correct Answers</div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-times-circle" style="color: var(--danger);"></i>
+                    <div class="value"><%= total - score %></div>
+                    <div class="label">Incorrect Answers</div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-bullseye" style="color: var(--primary);"></i>
+                    <div class="value"><%= Math.round((score / total) * 100) %>%</div>
+                    <div class="label">Accuracy</div>
+                </div>
+            </div>
+        </div>
+        
+        <% results.forEach(r => { %>
+            <div class="result-item <%= r.isCorrect ? 'correct' : 'incorrect' %>">
+                <div class="question">
+                    <i class="fas <%= r.isCorrect ? 'fa-check' : 'fa-times' %>"></i>
+                    Q<%= r.questionNumber %>: <%= r.question %>
+                </div>
+                <% if (r.isCorrect) { %>
+                    <div class="answer answer-correct">
+                        Your answer was correct: <strong><%= r.yourAnswer %></strong>
+                    </div>
+                <% } else { %>
+                    <div class="answer answer-incorrect">
+                        Your answer: <strong><%= r.yourAnswer %></strong>
+                    </div>
+                    <div class="answer">
+                        Correct answer: <strong><%= r.correctAnswer %></strong>
+                    </div>
+                <% } %>
+            </div>
+        <% }) %>
+        
+        <div class="resource-cta">
+            <h2>Ready for the Next Step?</h2>
+            <p>Let our AI analyze your results and generate personalized learning materials to help you master this topic.</p>
+            <form action="/generate-resource" method="POST" id="resourceForm">
                 <input type="hidden" name="topic" value="<%= topic %>">
                 <input type="hidden" name="quizResults" value='<%= JSON.stringify(results) %>'>
-                <button type="submit" class="btn-generate">
-                    <i class="fas fa-book"></i> Generate Learning Resources
+                <button type="submit" class="btn-generate" id="generateBtn">
+                    <i class="fas fa-magic"></i>
+                    <span>Generate Learning Resources</span>
                 </button>
             </form>
         </div>
     </div>
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-        
-        // Close menu when clicking on a link (for mobile)
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    navLinks.classList.remove('active');
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Mobile menu toggle ---
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+
+            // --- Score Donut Chart ---
+            const scoreValue = <%= score %>;
+            const totalValue = <%= total %>;
+            const scorePercentage = (scoreValue / totalValue) * 100;
+            const remainingPercentage = 100 - scorePercentage;
+            
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [scorePercentage, remainingPercentage],
+                        backgroundColor: ['#4361ee', '#e5e7eb'],
+                        borderWidth: 0,
+                        borderRadius: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    plugins: {
+                        tooltip: { enabled: false }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        duration: 1500
+                    }
                 }
+            });
+
+            // --- Form submission loading state ---
+            const resourceForm = document.getElementById('resourceForm');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            resourceForm.addEventListener('submit', () => {
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = `
+                    <div class="spinner"></div>
+                    <span>Analyzing Results...</span>
+                `;
             });
         });
     </script>

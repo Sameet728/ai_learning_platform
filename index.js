@@ -111,15 +111,25 @@ app.get("/", async (req, res) => {
 app.get("/quiz", async (req, res) => {
   try {
     if (!req.isAuthenticated || !req.isAuthenticated()) {
-      return res.redirect("/login"); // Redirect to login if user is not authenticated
+      return res.redirect("/login");
     }
 
-    res.render("quiz"); // No need for ../views, Express views dir handles it
+    // If user is admin → block
+    if (req.user && req.user.isAdmin) {
+      return res.render("quiz", { error: "admin" });
+    }
+
+    // Normal render (no error)
+    res.render("quiz", { error: null });
   } catch (e) {
     console.error("Error rendering quiz page:", e);
-    res.status(500).redirect("/error"); // Optional fallback
+    res.status(500).redirect("/error");
   }
 });
+
+
+
+
 
 app.post("/quizmaker", async (req, res) => {
   try {
@@ -168,7 +178,7 @@ switch (educationLevel) {
     console.log(`Assigned difficulty: ${difficulty}`);
 
     const prompt = `
-      Create a 10-question multiple choice quiz on the topic "${topic}" 
+      Create a 5-question multiple choice quiz on the topic "${topic}" 
       appropriate for ${educationLevel} (${difficulty} difficulty level).
       
       Requirements:
@@ -370,6 +380,7 @@ Focus only on the student’s weak areas:
   }
 });
 
+
 app.get("/dashboard", async (req, res) => {
   try {
     const user = req.user;
@@ -460,18 +471,26 @@ app.post(
 
       if (!user) {
         // Redirecting to the signup page if user doesn't exist
-        console.log("error", "Please sign up first."); // Use flash messages for better UX
+        console.log("error", "Please sign up first.");
         return res.redirect("/signup");
       }
 
       console.log("Logged In User:", user);
-      res.redirect("/");
+
+      // Check if admin
+      if (user.isAdmin) {
+        return res.redirect("/admin/scores");
+      }
+
+      // Normal user
+      return res.redirect("/");
     } catch (error) {
       console.error("Error during login:", error);
       res.redirect("/login");
     }
   }
 );
+
 
 app.get("/dashboard", (req, res) => {
   res.send("Welcome back, Sameet! 🚀");
@@ -674,4 +693,3 @@ app.get("/logout", (req, res, next) => {
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
-

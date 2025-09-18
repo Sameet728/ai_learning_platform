@@ -1,261 +1,378 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title><%= topic %> Quiz | LearnSmart</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title><%= topic %> Quiz | LearnSmart</title>
 
-  <!-- Tailwind CDN (optional if you're using your own CSS) -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f3f4f6;
-      margin: 0;
-      padding: 0;
-    }
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #e8edff;
+            --primary-dark: #3550d4;
+            --secondary: #7209b7;
+            --dark: #111827;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --success: #06d6a0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --border-radius: 12px;
+            --border-radius-lg: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: 'Inter', sans-serif;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-bg: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
 
-    .navbar {
-      background: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 1rem 0;
-      position: relative;
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-family);
+            background: var(--gradient-bg);
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-    .nav-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        /* --- Consistent Navbar --- */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.75rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-primary); font-weight: 500; transition: var(--transition); padding: 8px 12px; border-radius: 8px; }
+        .nav-links a:hover { color: var(--primary); background-color: var(--primary-light); }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary); }
+        .btn { display: inline-block; padding: 0.7rem 1.5rem; border-radius: var(--border-radius); text-decoration: none; transition: var(--transition); font-weight: 600; box-shadow: var(--shadow-sm); border: 2px solid transparent; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
 
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #2c3e50;
-      text-decoration: none;
-    }
+        /* --- Quiz UI --- */
+        .quiz-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 2rem;
+        }
 
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-    }
+        .quiz-header {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
 
-    .nav-links a {
-      text-decoration: none;
-      color: #2c3e50;
-      transition: color 0.3s ease;
-    }
+        .quiz-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quiz-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
 
-    .nav-links a:hover {
-      color: #3498db;
-    }
+        /* Progress Stepper */
+        .progress-stepper {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 2rem;
+        }
 
-    .mobile-menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #2c3e50;
-    }
+        .step {
+            flex: 1;
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        
+        .step.active {
+            background-color: var(--primary);
+            box-shadow: 0 0 15px rgba(67, 97, 238, 0.5);
+        }
 
-    .cta-button {
-      padding: 0.5rem 1.2rem;
-      background: #3498db;
-      color: white;
-      border-radius: 5px;
-      text-decoration: none;
-    }
+        /* Question Block */
+        .question-block {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        
+        .question-block.active {
+            border-color: var(--primary);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
 
-    .cta-button:hover {
-      background: #2980b9;
-    }
+        .question-header {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
 
-    .nav-links .login-button {
-      text-decoration: none;
-      border: 2px solid #2c3e50;
-      border-radius: 5px;
-      padding: 8px 15px;
-    }
+        .question {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
 
-    @media (max-width: 768px) {
-      .mobile-menu-btn {
-        display: block;
-      }
+        .option-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
 
-      .nav-links {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: #fff;
-        flex-direction: column;
-        gap: 0;
-        padding: 1rem 0;
-        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-        display: none;
-      }
+        .option-label {
+            background-color: var(--bg-light);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 500;
+        }
 
-      .nav-links.active {
-        display: flex;
-      }
+        .option-label:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
 
-      .nav-links a {
-        padding: 1rem;
-        width: 100%;
-        text-align: center;
-      }
+        .option-prefix {
+            font-weight: 700;
+            color: var(--primary);
+            border: 2px solid var(--primary-light);
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
 
-      .nav-links .cta-button,
-      .nav-links .login-button {
-        margin: 0.5rem auto;
-        display: block;
-        width: 80%;
-        text-align: center;
-      }
-    }
+        input[type="radio"] { display: none; }
+        
+        input[type="radio"]:checked + .option-label {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary-dark);
+            box-shadow: var(--shadow-md);
+        }
 
-    /* Quiz-specific styles */
-    .quiz-container {
-      background: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      max-width: 800px;
-      margin: 40px auto;
-    }
+        input[type="radio"]:checked + .option-label .option-prefix {
+            background-color: white;
+            color: var(--primary);
+            border-color: white;
+        }
+        
+        input[type="radio"]:checked + .option-label .fa-check-circle {
+            opacity: 1;
+            transform: scale(1);
+        }
 
-    h2 {
-      color: #4f46e5;
-      text-align: center;
-      margin-bottom: 30px;
-    }
+        .check-icon {
+            margin-left: auto;
+            color: white;
+            font-size: 1.25rem;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: var(--transition);
+        }
 
-    .question-block {
-      margin-bottom: 30px;
-    }
+        .submit-btn-wrapper {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .submit-btn {
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
 
-    .question {
-      font-size: 20px;
-      margin-bottom: 10px;
-      font-weight: bold;
-      color: #333;
-    }
+        .submit-btn:hover {
+            background-color: #059669;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
 
-    .option-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .option-label {
-      background-color: #f9fafb;
-      border: 2px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 10px 15px;
-      cursor: pointer;
-      transition: 0.3s ease;
-      display: block;
-    }
-
-    input[type="radio"]:checked + .option-label {
-      background-color: #4f46e5;
-      color: white;
-      border-color: #4f46e5;
-    }
-
-    .submit-btn {
-      padding: 12px 25px;
-      font-size: 16px;
-      background-color: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s ease;
-      display: block;
-      margin: 20px auto 0;
-    }
-
-    .submit-btn:hover {
-      background-color: #4338ca;
-    }
-  </style>
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+            .nav-links {
+                position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
+                flex-direction: column; gap: 0; padding: 1rem 0; box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+                display: none;
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a { padding: 1rem; width: 100%; text-align: center; }
+            .nav-links .cta-button, .nav-links .login-button { margin: 0.5rem auto; display: block; width: 80%; text-align: center; }
+        }
+        
+        @media (max-width: 480px) {
+            .quiz-container { padding: 1rem; margin-top: 20px; }
+            .quiz-header { padding: 1.5rem; }
+            .quiz-header h1 { font-size: 1.8rem; }
+            .question-block { padding: 1.5rem; }
+        }
+    </style>
 </head>
 
 <body>
-
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="container nav-container">
-      <a href="/" class="logo">LearnSmart</a>
-      <button class="mobile-menu-btn" id="mobileMenuBtn">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="nav-links" id="navLinks">
-        <a href="/notes">Notes</a>
-        <a href="/todo">To-Do</a>
-        <% if (currentUser) { %>
-          <a href="/dashboard" class="cta-button">Dashboard</a>
-          <a href="/logout" class="login-button">Logout</a>
-        <% } else { %>
-          <a href="/login" class="login-button">Login</a>
-        <% } %>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Quiz Content -->
-  <div class="quiz-container">
-    <h2><%=  topic.toUpperCase() %> Quiz</h2>
-    <form action="/submit-quiz" method="POST">
-      <% quiz.forEach((quizs, index) => { %>
-        <div class="question-block">
-          <div class="question">Q<%= index + 1 %>. <%= quizs.question %></div>
-          <div class="option-group">
-            <% quizs.options.forEach((opt, i) => { %>
-              <div>
-                <input type="radio" id="q<%= index %>_<%= i %>" name="q<%= index %>" value="<%= opt %>" required hidden>
-                <label class="option-label" for="q<%= index %>_<%= i %>"><%= opt %></label>
-              </div>
-            <% }) %>
-          </div>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo">LearnSmart</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="/notes">Notes</a>
+                <a href="/todo">To-Do</a>
+                <% if (currentUser) { %>
+                    <a href="/dashboard" class="btn btn-primary">Dashboard</a>
+                    <a href="/logout" class="btn btn-outline">Logout</a>
+                <% } else { %>
+                    <a href="/login" class="btn btn-outline">Login</a>
+                <% } %>
+            </div>
         </div>
-      <% }) %>
+    </nav>
 
-      <input type="hidden" name="answers" value='<%= JSON.stringify(quiz.map(q => q.answer)) %>' />
-      <input type="hidden" name="questions" value='<%= JSON.stringify(quiz.map(q => q.question)) %>' />
-      <input type="hidden" name="topic" value='<%=  topic.toUpperCase()    %>' />
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1><%= topic %></h1>
+            <div class="quiz-info">
+                <span><i class="fas fa-question-circle"></i> <%= quiz.length %> Questions</span>
+                
+            </div>
+        </div>
+        
+        <div class="progress-stepper">
+            <% quiz.forEach((q, index) => { %>
+                <div class="step" id="step-<%= index %>"></div>
+            <% }) %>
+        </div>
 
-      <button class="submit-btn" type="submit">Submit Quiz</button>
-    </form>
-  </div>
+        <form action="/submit-quiz" method="POST">
+            <% quiz.forEach((quizs, index) => { %>
+                <div class="question-block" id="question-block-<%= index %>">
+                    <div class="question-header">Question <%= index + 1 %> of <%= quiz.length %></div>
+                    <div class="question"><%= quizs.question %></div>
+                    <div class="option-group">
+                        <% quizs.options.forEach((opt, i) => { %>
+                            <div>
+                                <input type="radio" id="q<%= index %>_<%= i %>" name="q<%= index %>" value="<%= opt %>" required>
+                                <label class="option-label" for="q<%= index %>_<%= i %>">
+                                    <span class="option-prefix"><%= String.fromCharCode(65 + i) %></span>
+                                    <span><%= opt %></span>
+                                    <i class="fas fa-check-circle check-icon"></i>
+                                </label>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% }) %>
 
-  <script>
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const navLinks = document.getElementById('navLinks');
+            <input type="hidden" name="answers" value='<%= JSON.stringify(quiz.map(q => q.answer)) %>' />
+            <input type="hidden" name="questions" value='<%= JSON.stringify(quiz.map(q => q.question)) %>' />
+            <input type="hidden" name="topic" value='<%= topic %>' />
 
-    mobileMenuBtn.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-    });
+            <div class="submit-btn-wrapper">
+                <button class="submit-btn" type="submit">
+                    <i class="fas fa-paper-plane"></i> Submit Quiz
+                </button>
+            </div>
+        </form>
+    </div>
 
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-          navLinks.classList.remove('active');
-        }
-      });
-    });
-  </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+
+            // Intersection Observer for progress tracking
+            const questionBlocks = document.querySelectorAll('.question-block');
+            const steps = document.querySelectorAll('.step');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const index = entry.target.id.split('-')[2];
+                        
+                        // Update question card active state
+                        questionBlocks.forEach(block => block.classList.remove('active'));
+                        entry.target.classList.add('active');
+                        
+                        // Update stepper active state
+                        steps.forEach((step, i) => {
+                            if (i <= index) {
+                                step.classList.add('active');
+                            } else {
+                                step.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            }, {
+                rootMargin: '-50% 0px -50% 0px', // Trigger when the middle of the viewport hits the element
+                threshold: 0
+            });
+
+            questionBlocks.forEach(block => {
+                observer.observe(block);
+            });
+        });
+    </script>
 
 </body>
 </html>

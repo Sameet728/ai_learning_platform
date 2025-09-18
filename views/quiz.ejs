@@ -1,323 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Personalized Learning | LearnSmart</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <style>
-    /* Global Styles */
-    :root {
-      --primary-color: #4f46e5;
-      --primary-color-dark: #4338ca;
-      --secondary-color: #10b981;
-      --text-color: #374151;
-      --text-color-light: #6b7280;
-      --bg-color: #f3f4f6;
-      --card-bg-color: #ffffff;
-      --border-color: #e5e7eb;
-      --nav-bg: #ffffff;
-      --nav-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Learning | LearnSmart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #e8edff;
+            --primary-dark: #3550d4;
+            --secondary: #7209b7;
+            --dark: #111827;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --border-radius: 12px;
+            --border-radius-lg: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: 'Inter', sans-serif;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-bg: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+        body {
+            font-family: var(--font-family);
+            background: var(--gradient-bg);
+            color: var(--text-secondary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    /* Navbar Styles */
-    .navbar {
-      background: var(--nav-bg);
-      box-shadow: var(--nav-shadow);
-      padding: 1rem 0;
-      position: relative;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+        /* --- Re-usable Navbar (Consistent with other pages) --- */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.75rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-primary); font-weight: 500; transition: var(--transition); padding: 8px 12px; border-radius: 8px; }
+        .nav-links a:hover { color: var(--primary); background-color: var(--primary-light); }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-primary); }
+        .btn { display: inline-block; padding: 0.7rem 1.5rem; border-radius: var(--border-radius); text-decoration: none; transition: var(--transition); font-weight: 600; box-shadow: var(--shadow-sm); border: 2px solid transparent; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
 
-    .nav-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        /* --- Main Content --- */
+        .quizmaker-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
 
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #2c3e50;
-      text-decoration: none;
-    }
+        .quizmaker-card {
+            background: var(--bg-white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            max-width: 950px;
+            width: 100%;
+            display: flex;
+            overflow: hidden;
+        }
 
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      align-items: center;
-    }
+        .form-section {
+            padding: 3rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
-    .nav-links a {
-      text-decoration: none;
-      color: #2c3e50;
-      transition: color 0.3s ease;
-      font-weight: 500;
-    }
+        .form-section h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
 
-    .nav-links a:hover {
-      color: var(--primary-color);
-    }
+        .form-section p {
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
 
-    .mobile-menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #2c3e50;
-    }
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
 
-    .btn {
-      display: inline-block;
-      padding: 0.6rem 1.2rem;
-      border-radius: 5px;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
 
-    .btn-primary {
-      background: var(--primary-color);
-      color: white;
-    }
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
 
-    .btn-primary:hover {
-      background: var(--primary-color-dark);
-    }
+        .form-control {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.75rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            background-color: var(--bg-light);
+        }
 
-    .btn-outline {
-      border: 2px solid #2c3e50;
-      color: #2c3e50;
-    }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+            background-color: var(--bg-white);
+        }
 
-    .btn-outline:hover {
-      background: #f8f9fa;
-    }
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
 
-    /* Quiz Maker Content Styles */
-    .quizmaker-container {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
+        .btn-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
 
-    .quizmaker-card {
-      background: var(--card-bg-color);
-      padding: 2.5rem;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      max-width: 500px;
-      width: 100%;
-      text-align: center;
-    }
+        .btn-submit:disabled {
+            background-color: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
-    .quizmaker-card h2 {
-      font-size: 1.8rem;
-      color: var(--primary-color);
-      margin-bottom: 1.5rem;
-    }
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        /* Updated Info Section */
+        .info-section {
+            flex: 0 0 45%;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .quizmaker-card p {
-      color: var(--text-color-light);
-      margin-bottom: 2rem;
-    }
+        .info-section::before {
+            content: '\f0eb'; /* Font Awesome lightbulb icon */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            bottom: -50px;
+            right: -40px;
+            font-size: 250px;
+            color: rgba(255, 255, 255, 0.08);
+            transform: rotate(-20deg);
+            z-index: 0;
+        }
 
-    .form-group {
-      margin-bottom: 1.5rem;
-      text-align: left;
-    }
+        .info-section h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+            position: relative;
+            z-index: 1;
+        }
 
-    .form-control {
-      width: 100%;
-      padding: 0.8rem 1rem;
-      font-size: 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
+        .info-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
-    .form-control:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+            .nav-links {
+                position: absolute; top: 100%; left: 0; width: 100%; background: var(--nav-bg);
+                flex-direction: column; gap: 0; padding: 1rem 0; box-shadow: var(--nav-shadow);
+                display: none;
+            }
+            .nav-links.active { display: flex; }
+            .nav-links a { padding: 1rem; width: 100%; text-align: center; }
+            .nav-links .btn { margin: 0.5rem auto; display: block; width: 80%; text-align: center; }
+            
+            .quizmaker-card { flex-direction: column; }
+            .info-section { display: none; } /* Hide info section on mobile for simplicity */
+            .form-section { padding: 2rem; }
+            .form-section h2 { font-size: 1.5rem; }
+            .form-section p { font-size: 1rem; }
+        }
 
-    .form-label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: var(--text-color);
-    }
-
-    .btn-submit {
-      background: var(--primary-color);
-      color: white;
-      padding: 0.8rem 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .btn-submit:hover {
-      background: var(--primary-color-dark);
-      transform: translateY(-2px);
-    }
-
-    .output {
-      margin-top: 2rem;
-      text-align: left;
-      padding: 1rem;
-      background: #f8fafc;
-      border-radius: 8px;
-    }
-
-    /* Responsive Styles */
-    @media (max-width: 768px) {
-      .mobile-menu-btn {
-        display: block;
-      }
-      
-      .nav-links {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: var(--nav-bg);
-        flex-direction: column;
-        gap: 0;
-        padding: 1rem 0;
-        box-shadow: var(--nav-shadow);
-        display: none;
-      }
-      
-      .nav-links.active {
-        display: flex;
-      }
-      
-      .nav-links a {
-        padding: 1rem;
-        width: 100%;
-        text-align: center;
-      }
-      
-      .nav-links .btn {
-        margin: 0.5rem auto;
-        display: block;
-        width: 80%;
-        text-align: center;
-      }
-      
-      .quizmaker-card {
-        padding: 1.5rem;
-      }
-      
-      .quizmaker-card h2 {
-        font-size: 1.5rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .quizmaker-card {
-        padding: 1.25rem;
-      }
-      
-      .quizmaker-card h2 {
-        font-size: 1.3rem;
-      }
-      
-      .btn-submit {
-        padding: 0.7rem 1.5rem;
-      }
-    }
-  </style>
+        @media (max-width: 480px) {
+            .form-section { padding: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="container nav-container">
-      <a href="/" class="logo">LearnSmart</a>
-      <button class="mobile-menu-btn" id="mobileMenuBtn">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="nav-links" id="navLinks">
-        <a href="/notes">Notes</a>
-        <a href="/todo">To-Do</a>
-        <% if (currentUser) { %>
-          <a href="/dashboard" class="btn btn-primary">Dashboard</a>
-          <a href="/logout" class="btn btn-outline">Logout</a>
-        <% } else { %>
-          <a href="/login" class="btn btn-outline">Login</a>
-        <% } %>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Quiz Maker Content -->
-  <main class="quizmaker-container">
-    <div class="quizmaker-card">
-      <h2>What do you want to learn today?</h2>
-      <p>Enter a topic to generate a personalized learning quiz</p>
-      
-      <form action="/quizmaker" method="POST">
-        <div class="form-group">
-          <label for="topicInput" class="form-label">Topic</label>
-          <input type="text" name="topic" id="topicInput" class="form-control" 
-                 placeholder="e.g. Python, Algebra, History..." required />
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo">LearnSmart</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="/notes">Notes</a>
+                <a href="/todo">To-Do</a>
+                <% if (currentUser) { %>
+                  <a href="/dashboard">Dashboard</a>
+                  <a href="/logout" class="btn btn-outline">Logout</a>
+                <% } else { %>
+                  <a href="/login" class="btn btn-outline">Login</a>
+                  <a href="/signup" class="btn btn-primary">Sign Up</a>
+                <% } %>
+            </div>
         </div>
-        
-        <button type="submit" class="btn-submit">
-          <i class="fas fa-play"></i> Start Learning
-        </button>
-      </form>
+    </nav>
 
-      <!-- Optional output area for feedback -->
-      <div class="output" id="outputArea"></div>
-    </div>
-  </main>
+    <main class="quizmaker-container">
+        <div class="quizmaker-card">
+            <div class="form-section">
+                <h2>Create Your Personalized Quiz</h2>
+                <p>Enter any topic, and our AI will instantly generate a quiz tailored to your learning level.</p>
+                
+                <form action="/quizmaker" method="POST" id="quizForm">
+                    <div class="form-group">
+                        <label for="topicInput" class="form-label">What do you want to learn today?</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-search input-icon"></i>
+                            <input type="text" name="topic" id="topicInput" class="form-control" 
+                                   placeholder="e.g., Python, Algebra, History..." required />
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-cogs"></i>
+                        <span>Generate Quiz</span>
+                    </button>
+                </form>
+            </div>
+            <div class="info-section">
+                <h3>Spark Your Curiosity</h3>
+                <p>From complex theories to historical events, generate a custom quiz on any topic in seconds. Your personalized learning path awaits.</p>
+            </div>
+        </div>
+    </main>
 
-  <script>
-    // Mobile menu toggle
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const navLinks = document.getElementById('navLinks');
-    
-    mobileMenuBtn.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
-    });
-    
-    // Close menu when clicking on a link (for mobile)
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-          navLinks.classList.remove('active');
-        }
-      });
-    });
-  </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+            
+            // Form submission loading state
+            const quizForm = document.getElementById('quizForm');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            quizForm.addEventListener('submit', () => {
+                // Disable button to prevent multiple submissions
+                submitBtn.disabled = true;
+                
+                // Change button content to show loading state
+                submitBtn.innerHTML = `
+                    <div class="spinner"></div>
+                    <span>Generating...</span>
+                `;
+            });
+        });
+    </script>
 </body>
 </html>

@@ -4,7 +4,13 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const userSchema = new mongoose.Schema({
   email: String,
   username: String,
-  educationLevel: { type: String, required: true },  // 👈 NEW FIELD
+  educationLevel: { type: String, required: true }, 
+   // ✅ Admin flag
+  isAdmin: {
+    type: Boolean,
+    default: false,   // By default users are NOT admins
+  },
+ // 👈 NEW FIELD
   quizzes: [
     {
       topic: String,

@@ -1,281 +1,466 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LearnSmart - AI-Powered Learning</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-        line-height: 1.6;
-        color: #333;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 20px;
-    }
-
-    .navbar {
-        background: #fff;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        padding: 1rem 0;
-        position: relative;
-    }
-
-    .nav-container{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #2c3e50;
-        text-decoration: none;
-    }
-
-    .nav-links {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
-    }
-
-    .nav-links a {
-        text-decoration: none;
-        color: #2c3e50;
-        transition: color 0.3s ease;
-    }
-
-    .nav-links a:hover {
-        color: #3498db;
-    }
-
-    .mobile-menu-btn {
-        display: none;
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: #2c3e50;
-    }
-
-    .hero {
-        padding: 4rem 0;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    }
-
-    .hero .container {
-        display: flex;
-        align-items: center;
-        gap: 3rem;
-    }
-
-    .hero-content {
-        flex: 1;
-    }
-
-    .hero-content h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        color: #2c3e50;
-    }
-
-    .hero-content p {
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-        color: #7f8c8d;
-    }
-
-    .hero-image {
-        flex: 1;
-    }
-
-    .hero-image img {
-        width: 100%;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    .features {
-        padding: 4rem 0;
-        background: #fff;
-    }
-
-    .features h2 {
-        text-align: center;
-        margin-bottom: 3rem;
-        color: #2c3e50;
-    }
-
-    .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-    }
-
-    .feature-card {
-        padding: 2rem;
-        text-align: center;
-        background: #f8f9fa;
-        border-radius: 10px;
-        transition: transform 0.3s ease;
-    }
-
-    .feature-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .feature-card i {
-        font-size: 2.5rem;
-        color: #3498db;
-        margin-bottom: 1rem;
-    }
-
-    .cta-button {
-        display: inline-block;
-        padding: 0.8rem 2rem;
-        background: #3498db;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        transition: background 0.3s ease;
-    }
-
-    .cta-button:hover {
-        background: #2980b9;
-    }
-
-    footer {
-        background: #2c3e50;
-        color: white;
-        padding: 2rem 0;
-        text-align: center;
-    }
-
-    @media (max-width: 768px) {
-        .hero .container {
-            flex-direction: column;
-            text-align: center;
+        :root {
+            --primary: #4361ee;
+            --primary-light: #e8edff;
+            --secondary: #7209b7;
+            --dark: #111827;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: 'Inter', sans-serif;
         }
-        
-        .mobile-menu-btn {
-            display: block;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .nav-links {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: #fff;
-            flex-direction: column;
-            gap: 0;
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            color: var(--text-secondary);
+            background-color: var(--bg-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- Navigation Bar --- */
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             padding: 1rem 0;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
         }
-        
-        .nav-links.active {
+
+        .navbar.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-container {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
         .nav-links a {
-            padding: 1rem;
-            width: 100%;
-            text-align: center;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 12px;
+            border-radius: 8px;
         }
-        
-        .nav-links .quiz-button,
-        .nav-links .login-button {
-            margin: 0.5rem auto;
-            display: block;
-            width: 80%;
-            text-align: center;
+
+        .nav-links a:hover {
+            color: var(--primary);
+            background-color: var(--primary-light);
         }
-    }
-    
-    .nav-links .quiz-button {
-        color: white;
-    }
-    
-    .nav-links .quiz-button a:hover {
-        color: white;
-    }
-    
-    .nav-links .login-button {
-        text-decoration: none;
-        border: 2px solid #2c3e50;
-        border-radius: 5px;
-        padding: 8px 15px;
-        display: inline-block;
-    }
 
-    /* AI Chatbot Container */
-    .ai-chatbot-container {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
-    }
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
 
-    .ai-chatbot-iframe {
-        width: 350px;
-        height: 500px;
-        border: none;
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        display: none; /* Hidden by default */
-    }
+        .cta-button,
+        .login-button {
+            display: inline-block;
+            padding: 0.7rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+        }
 
-    .ai-chatbot-iframe.active {
-        display: block;
-    }
+        .cta-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
 
-    .ai-chatbot-toggle {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #3498db;
-        color: white;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
-        z-index: 1001;
-    }
+        .login-button {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
 
-    .ai-chatbot-toggle:hover {
-        background-color: #2980b9;
-        transform: scale(1.1);
-    }
+        .login-button:hover {
+            background: var(--primary);
+            color: white;
+        }
 
-    @media (max-width: 480px) {
-        .ai-chatbot-iframe {
-            width: 90vw;
-            right: 5vw;
+        /* --- Hero Section --- */
+        .hero {
+            padding: 6rem 0;
+            background: var(--bg-light);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -15%;
+            right: -5%;
+            width: 400px;
             height: 400px;
+            background: radial-gradient(circle, var(--secondary-light) 0%, transparent 70%);
+            border-radius: 50%;
         }
-    }
+
+        .hero .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin: 0 auto 2.5rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+        }
+
+        .hero-image-container {
+            margin-top: 4rem;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 800px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-xl);
+            transition: var(--transition);
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02);
+        }
+
+        /* --- Features Section --- */
+        .features {
+            padding: 6rem 0;
+            background: var(--bg-white);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--text-secondary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2.5rem;
+            text-align: center;
+            background: var(--bg-light);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            width: 70px;
+            height: 70px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--primary);
+            color: white;
+            transform: rotate(10deg);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        /* --- CTA Section --- */
+        .cta-section {
+            padding: 6rem 0;
+            background: var(--dark);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-section p {
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.8;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--text-primary);
+            color: var(--bg-light);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.7;
+        }
+
+        /* --- AI Chatbot --- */
+        .ai-chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .ai-chatbot-iframe {
+            width: 370px;
+            height: 550px;
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-xl);
+            transform-origin: bottom right;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .ai-chatbot-iframe.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .ai-chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            border: none;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(67, 97, 238, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(67, 97, 238, 0);
+            }
+        }
+
+        .ai-chatbot-toggle:hover {
+            transform: scale(1.1);
+            animation: none;
+        }
+
+        /* --- Animation on Scroll --- */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) {
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--bg-white);
+                flex-direction: column;
+                gap: 0;
+                padding: 1rem 0;
+                box-shadow: var(--shadow-md);
+                transform: translateY(-10px);
+                opacity: 0;
+                pointer-events: none;
+                transition: var(--transition);
+            }
+
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .nav-links a {
+                padding: 1rem;
+                width: 90%;
+                text-align: center;
+                margin: 0.25rem auto;
+            }
+
+            .cta-section,
+            .features,
+            .hero {
+                padding: 4rem 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ai-chatbot-iframe {
+                width: calc(100vw - 40px);
+                height: 70vh;
+            }
+        }
     </style>
 </head>
+
 <body>
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="container nav-container">
             <a href="/" class="logo">LearnSmart</a>
             <button class="mobile-menu-btn" id="mobileMenuBtn">
@@ -284,111 +469,163 @@
             <div class="nav-links" id="navLinks">
                 <a href="/notes">Notes</a>
                 <a href="/todo">To-Do</a>
-                
+
                 <% if (currentUser) { %>
-                    <a href="dashboard" class="cta-button quiz-button">Dashboard</a>
-                    <a href="progress" class="cta-button quiz-button">Scores</a>
-                <% } else { %>
-                    <a href="quiz" class="cta-button quiz-button">Get Started</a>
-                <% } %>
-                <% if (currentUser) { %>
-                    <a href="/logout" class="login-button">Logout</a>
-                <% } else { %>
-                    <a href="/login" class="login-button">Login</a>
-                <% } %>
+                    <% if (currentUser.isAdmin) { %>
+                        <a href="/admin/scores">Analysis</a>
+                        <a href="/logout" class="login-button">Logout</a>
+                        <% } else { %>
+                            <a href="/dashboard">Dashboard</a>
+                            <a href="/progress">Scores</a>
+                            <a href="/logout" class="login-button">Logout</a>
+                            <% } %>
+                                <% } else { %>
+                                    <a href="/login" class="login-button">Login</a>
+                                    <a href="/signup" class="cta-button">Get Started</a>
+                                    <% } %>
+
             </div>
         </div>
     </nav>
-    
 
     <section class="hero">
         <div class="container">
-            <div class="hero-content">
-                <h1>Personalized Learning Powered by AI</h1>
-                <p>Discover your perfect learning path with adaptive content recommendations</p>
-                <a href="quiz" class="cta-button">Start Free Assessment</a>
+            <div class="hero-content animate-on-scroll">
+                <h1>Unlock Your Full Potential with <span class="highlight">AI-Powered</span> Learning</h1>
+                <p>LearnSmart adapts to you, creating a personalized educational journey with custom quizzes, resources,
+                    and progress tracking.</p>
+                <% if (currentUser && !currentUser.isAdmin) { %>
+                    <a href="/quiz" class="cta-button">Start Your Free Assessment</a>
+                    <% } %>
+
             </div>
-            <div class="hero-image">
-                <img src="https://res.cloudinary.com/drp3ojnl0/image/upload/v1743949952/WhatsApp_Image_2025-04-05_at_19.32.57_054f2e1a_l45cfx.jpg" alt="Learning illustration">
+            <div class="hero-image-container animate-on-scroll" style="transition-delay: 0.2s;">
+                <img class="hero-image"
+                    src="https://res.cloudinary.com/drp3ojnl0/image/upload/v1743949952/WhatsApp_Image_2025-04-05_at_19.32.57_054f2e1a_l45cfx.jpg"
+                    alt="A student using a futuristic learning interface">
             </div>
         </div>
     </section>
 
     <section class="features" id="features">
         <div class="container">
-            <h2>Why Choose LearnSmart?</h2>
+            <div class="section-header animate-on-scroll">
+                <h2>Why Choose LearnSmart?</h2>
+                <p>We leverage cutting-edge technology to make your learning experience more effective, efficient, and
+                    engaging.</p>
+            </div>
             <div class="features-grid">
-                <div class="feature-card">
-                    <i class="fas fa-brain"></i>
+                <div class="feature-card animate-on-scroll" style="transition-delay: 0.1s;">
+                    <div class="feature-icon"><i class="fas fa-brain"></i></div>
                     <h3>AI-Powered Recommendations</h3>
-                    <p>Get content tailored to your unique learning style and pace</p>
+                    <p>Get content and quizzes tailored to your unique learning style and current knowledge level.</p>
                 </div>
-                <div class="feature-card">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Progress Tracking</h3>
-                    <p>Monitor your learning journey with detailed analytics</p>
+                <div class="feature-card animate-on-scroll" style="transition-delay: 0.2s;">
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Intelligent Progress Tracking</h3>
+                    <p>Monitor your learning journey with detailed analytics and see your improvement over time.</p>
                 </div>
-                <div class="feature-card">
-                    <i class="fas fa-book-open"></i>
-                    <h3>Diverse Content</h3>
-                    <p>Access videos, articles, and interactive exercises</p>
+                <div class="feature-card animate-on-scroll" style="transition-delay: 0.3s;">
+                    <div class="feature-icon"><i class="fas fa-book-open"></i></div>
+                    <h3>Dynamic Resource Generation</h3>
+                    <p>Access personalized videos, articles, and interactive exercises based on your performance.</p>
                 </div>
             </div>
         </div>
     </section>
 
+    <section class="cta-section">
+        <div class="container animate-on-scroll">
+            <h2>Ready to Transform Your Learning?</h2>
+            <p>Join thousands of learners who are achieving their goals faster with LearnSmart. It's free to get
+                started!</p>
+            <a href="/signup" class="cta-button">Sign Up For Free</a>
+        </div>
+    </section>
+
     <footer>
         <div class="container">
-            <p>"Empowering minds, shaping the future."</p>
+            <p>&copy; <%= new Date().getFullYear() %> LearnSmart. "Empowering minds, shaping the future."</p>
         </div>
     </footer>
 
-    <!-- AI Chatbot Container -->
     <div class="ai-chatbot-container">
-        <iframe 
-            class="ai-chatbot-iframe" 
-            src="https://sameet-ai-updated.vercel.app/" 
-            title="AI Chatbot"
-            allow="microphone"
-            id="aiChatbotIframe"
-        ></iframe>
-        <button class="ai-chatbot-toggle" id="aiChatbotToggle">
+        <iframe class="ai-chatbot-iframe" src="https://sameet-ai-updated.vercel.app/" title="AI Chatbot"
+            allow="microphone" id="aiChatbotIframe"></iframe>
+        <button class="ai-chatbot-toggle" id="aiChatbotToggle" title="Toggle AI Assistant">
             <i class="fas fa-robot"></i>
         </button>
     </div>
 
+
+
     <script>
-        // Mobile menu toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-        
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-        
-        // Close menu when clicking on a link (for mobile)
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    navLinks.classList.remove('active');
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Mobile Menu Toggle ---
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            const mobileIcon = mobileMenuBtn.querySelector('i');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                if (navLinks.classList.contains('active')) {
+                    mobileIcon.classList.remove('fa-bars');
+                    mobileIcon.classList.add('fa-times');
+                } else {
+                    mobileIcon.classList.remove('fa-times');
+                    mobileIcon.classList.add('fa-bars');
                 }
             });
-        });
 
-        // AI Chatbot Toggle
-        const chatbotToggle = document.getElementById('aiChatbotToggle');
-        const chatbotIframe = document.getElementById('aiChatbotIframe');
-        let chatbotOpen = false;
+            // --- AI Chatbot Toggle ---
+            const chatbotToggle = document.getElementById('aiChatbotToggle');
+            const chatbotIframe = document.getElementById('aiChatbotIframe');
+            const chatbotIcon = chatbotToggle.querySelector('i');
+            let chatbotOpen = false;
 
-        chatbotToggle.addEventListener('click', () => {
-            chatbotOpen = !chatbotOpen;
-            if (chatbotOpen) {
-                chatbotIframe.classList.add('active');
-            } else {
-                chatbotIframe.classList.remove('active');
-            }
+            chatbotToggle.addEventListener('click', () => {
+                chatbotOpen = !chatbotOpen;
+                chatbotIframe.classList.toggle('active');
+
+                if (chatbotOpen) {
+                    chatbotToggle.style.animation = 'none';
+                    chatbotIcon.classList.remove('fa-robot');
+                    chatbotIcon.classList.add('fa-times');
+                } else {
+                    chatbotToggle.style.animation = 'pulse 2s infinite';
+                    chatbotIcon.classList.remove('fa-times');
+                    chatbotIcon.classList.add('fa-robot');
+                }
+            });
+
+            // --- Navbar Scroll Effect ---
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // --- Animate on Scroll ---
+            const scrollElements = document.querySelectorAll('.animate-on-scroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            scrollElements.forEach(el => observer.observe(el));
         });
     </script>
+
+
+
 </body>
 
 </html>
